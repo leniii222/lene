@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>კარი... და შენი ოთახი</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="scene" class="scene">
+
+    <!-- ეკრანი 1: კარი + გასაღები -->
+    <div id="door-screen" class="screen active">
+      <div class="door-container">
+        <div id="door" class="door closed"></div>
+        <div id="key" class="key"></div>
+        <div class="text-overlay">გასაღები აიღე და კარი გააღე...</div>
+      </div>
+    </div>
+
+    <!-- ეკრანი 2: ბნელი ოთახი -->
+    <div id="dark-room" class="screen">
+      <div class="dark-overlay"></div>
+      <button id="light-switch" class="switch">ლამპა აანთე</button>
+      <div class="text-overlay small">ძალიან ბნელია...</div>
+    </div>
+
+    <!-- ეკრანი 3: განათებული ოთახი -->
+    <div id="lit-room" class="screen">
+      <div class="room">
+        <div class="tv-frame">
+          <div id="tv" class="tv off">
+            <div class="tv-text">ჩართე</div>
+          </div>
+        </div>
+
+        <div class="plants">
+          <div class="plant"></div>
+          <div class="plant"></div>
+          <div class="plant big"></div>
+        </div>
+
+        <div class="sofa"></div>
+
+        <div id="table" class="table">
+          <div id="letter" class="letter closed">წერილი</div>
+        </div>
+
+        <div class="printer-and-figures">
+          <div class="printer"></div>
+          <div class="figure"></div>
+          <div class="figure small"></div>
+        </div>
+
+        <div id="tv-message" class="hidden message">კარტოფილს შეჭამ?</div>
+        <div id="letter-text" class="hidden message letter-text">
+          ჩაგეხუტე ძალიან ბევრი ♡
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <audio id="door-creak" src="https://assets.codepen.io/243235/door-creak.mp3" preload="auto"></audio>
+  <!-- უკეთესი ხმა რომ გინდა → შეცვალე ლინკი ან ატვირთე თავისი ფაილი -->
+
+  <script src="script.js"></script>
+</body>
+</html>
