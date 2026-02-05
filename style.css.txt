@@ -1,0 +1,338 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  background: #0a0e0a;
+  font-family: 'Courier New', Courier, monospace;
+  color: #0f5c0f;
+  overflow: hidden;
+  image-rendering: pixelated;
+}
+
+.scene {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  background: #0a0e0a;
+}
+
+.screen.active {
+  display: block;
+}
+
+.text-overlay {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #0f5c0f;
+  font-size: 1.4rem;
+  text-shadow: 0 0 10px #0f5c0f;
+  pointer-events: none;
+  text-align: center;
+  max-width: 90%;
+}
+
+.small { font-size: 1.1rem; }
+
+/* კარი */
+.door-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.door {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 260px;
+  height: 380px;
+  background: linear-gradient(135deg, #0a1f0a, #05140a);
+  border: 8px solid #0b3d0b;
+  box-shadow: 0 0 30px #0f5c0f inset, 0 0 60px #0a1f0a;
+  transition: transform 1.6s ease-in-out;
+}
+
+.door.closed::before {
+  content: " ";
+  position: absolute;
+  inset: 12px;
+  border: 4px solid #0f5c0f77;
+  background: repeating-linear-gradient(
+    45deg,
+    #0a1f0a 0,
+    #0a1f0a 4px,
+    #05140a 4px,
+    #05140a 8px
+  );
+}
+
+.door.open {
+  transform: translate(-50%, -50%) rotateY(70deg);
+}
+
+.key {
+  position: absolute;
+  left: 30%;
+  top: 60%;
+  width: 60px;
+  height: 30px;
+  background: #0f5c0f;
+  border-radius: 4px;
+  box-shadow: 0 0 15px #0f5c0f;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.key:hover {
+  transform: scale(1.15) rotate(10deg);
+  box-shadow: 0 0 25px #0f5c0f;
+}
+
+.key::after {
+  content: "🔑";
+  position: absolute;
+  font-size: 2.8rem;
+  top: -15px;
+  left: 12px;
+}
+
+/* ბნელი ოთახი */
+.dark-overlay {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: 0.94;
+  transition: opacity 2s;
+}
+
+#light-switch {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px 40px;
+  font-size: 1.6rem;
+  background: #0a1f0a;
+  color: #0f5c0f;
+  border: 3px solid #0f5c0f;
+  cursor: pointer;
+  box-shadow: 0 0 20px #0f5c0f44;
+}
+
+#light-switch:hover {
+  background: #0f5c0f22;
+}
+
+/* განათებული ოთახი */
+.room {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #1a2a1a;
+  box-shadow: inset 0 0 80px #0f5c0f44;
+  overflow: hidden;
+}
+
+/* თბილი განათება */
+.room::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, #ffebcc33 0%, transparent 60%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 2s;
+}
+
+#lit-room.active .room::before {
+  opacity: 1;
+}
+
+/* ტელევიზორი */
+.tv-frame {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 380px;
+  height: 240px;
+  background: #0a0e0a;
+  border: 12px solid #0b3d0b;
+  box-shadow: 0 0 30px #000;
+}
+
+.tv {
+  width: 100%;
+  height: 100%;
+  background: #111;
+  position: relative;
+  cursor: pointer;
+}
+
+.tv.off::before {
+  content: " ";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    #222 0px,
+    #222 2px,
+    #111 2px,
+    #111 4px
+  );
+}
+
+.tv-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f5c0f;
+  font-size: 2.2rem;
+  text-shadow: 0 0 10px currentColor;
+}
+
+/* დივანი, მცენარეები, მაგიდა */
+.sofa {
+  position: absolute;
+  bottom: 10%;
+  left: 8%;
+  width: 300px;
+  height: 140px;
+  background: #0a1f0a;
+  border: 6px solid #0b3d0b;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px #000;
+}
+
+.plants {
+  position: absolute;
+  top: 15%;
+  right: 8%;
+  width: 180px;
+}
+
+.plant {
+  width: 60px;
+  height: 120px;
+  background: linear-gradient(#0f5c0f, #0a3c0a);
+  border-radius: 50% 50% 0 0;
+  margin: 20px 0;
+}
+
+.plant.big { width: 90px; height: 160px; }
+
+.table {
+  position: absolute;
+  bottom: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 100px;
+  background: #0a1f0a;
+  border: 5px solid #0b3d0b;
+  box-shadow: 0 8px 20px #000;
+}
+
+.letter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90px;
+  height: 60px;
+  background: #1a2a1a;
+  border: 3px solid #0f5c0f88;
+  cursor: pointer;
+  transition: transform 0.4s;
+}
+
+.letter:hover { transform: translate(-50%, -50%) scale(1.1); }
+
+.letter::before {
+  content: "✉";
+  font-size: 3rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #0f5c0f;
+}
+
+/* 3D პრინტერი + ფიგურები (მარტივად) */
+.printer-and-figures {
+  position: absolute;
+  bottom: 12%;
+  right: 10%;
+}
+
+.printer {
+  width: 100px;
+  height: 70px;
+  background: #0a0e0a;
+  border: 4px solid #0f5c0f44;
+}
+
+.figure {
+  width: 40px;
+  height: 80px;
+  background: #0f5c0f;
+  border-radius: 8px;
+  position: absolute;
+  top: -90px;
+  left: 20px;
+}
+
+.figure.small {
+  width: 30px;
+  height: 60px;
+  left: 70px;
+  top: -70px;
+}
+
+/* წარწერები */
+.message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  color: #0f5c0f;
+  text-shadow: 0 0 20px currentColor;
+  pointer-events: none;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+.hidden { display: none; }
+
+.letter-text {
+  font-size: 2.5rem;
+  background: rgba(0,0,0,0.6);
+  padding: 40px;
+  border: 4px solid #0f5c0f;
+}
+
+/* მობილურისთვის */
+@media (max-width: 600px) {
+  .door { width: 220px; height: 320px; }
+  .tv-frame { width: 300px; height: 190px; }
+  .sofa { width: 240px; height: 110px; }
+  .message { font-size: 2.2rem; }
+  .letter-text { font-size: 2rem; padding: 20px; }
+}
