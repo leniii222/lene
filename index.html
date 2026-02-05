@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Phone UI</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Press Start 2P', monospace; }
+
+body {
+  height: 100vh;
+  background: black;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ⭐ Stars */
+.stars { position: fixed; inset: 0; z-index: -1; }
+.star {
+  position: absolute;
+  width: 2px; height: 2px;
+  background: white;
+  animation: blink 2s infinite alternate;
+}
+@keyframes blink { from { opacity: .15; } to { opacity: 1; } }
+
+/* 📱 Phone Container */
+.phone-wrap {
+  position: relative;
+  width: 90%;
+  max-width: 320px; /* ზომა მორგებულია მობილურისთვის */
+  line-height: 0;
+}
+
+.phone-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 20px 40px rgba(0,0,0,.8));
+}
+
+/* 🖥 Screen UI - ზუსტად მორგებული Sony Ericsson-ის ეკრანზე */
+.screen-ui {
+  position: absolute;
+  /* 📍 ეს პროცენტები აბალანსებს ეკრანის მდებარეობას სურათზე */
+  top: 17.5%; 
+  left: 50%;
+  transform: translateX(-50%);
+  
+  width: 61%;  /* ეკრანის სიგანე სურათის მიხედვით */
+  height: 29%; /* ეკრანის სიმაღლე სურათის მიხედვით */
+
+  padding: 10px 6px;
+  color: #ffb347;
+  text-align: center;
+  font-size: 7px;
+
+  background: linear-gradient(180deg, #0e1416, #060909);
+  border-radius: 4px;
+  box-shadow: inset 0 0 10px #000;
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  line-height: 1.2;
+  z-index: 10;
+}
+
+.time { font-size: 6px; margin-bottom: 4px; color: #8a8a8a; }
+.message { 
+  flex-grow: 1; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  word-break: break-word;
+  font-size: 7px;
+}
+
+.buttons { display: flex; gap: 4px; height: 18px; }
+button {
+  flex: 1;
+  padding: 2px;
+  font-size: 6px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #1a1a1a, #050505);
+  color: #ffb347;
+  border: 1px solid #333;
+  cursor: pointer;
+  z-index: 20;
+}
+button:active { transform: translateY(1px); }
+
+/* Overlays */
+.overlay {
+  position: fixed; inset: 0;
+  display: flex; justify-content: center; align-items: center;
+  flex-direction: column;
+  font-size: 24px;
+  opacity: 0; pointer-events: none;
+  transition: .35s;
+  z-index: 100;
+}
+.overlay.show { opacity: 1; }
+.pink { background: #ff9ecb; color: white; }
+.heart { font-size: 64px; }
+.small { font-size: 10px; margin-top: 16px; text-align: center; line-height: 1.5; }
+</style>
+</head>
+
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="phone-wrap">
+  <img src="IMG_8524.png" class="phone-img" alt="phone">
+
+  <div class="screen-ui">
+    <div class="time">22:22</div>
+    <div class="message" id="msg"></div>
+    <div class="buttons" id="btns"></div>
+  </div>
+</div>
+
+<div class="overlay pink" id="pink">
+  <div>->_<</div>
+  <div class="small">vashaa.<br>gatoce.</div>
+</div>
+
+<div class="overlay" id="heart">
+  <div class="heart">❤</div>
+</div>
+
+<script>
+// ✨ Stars Generation
+const starsCont = document.getElementById("stars");
+for(let i=0; i<80; i++){
+  const s = document.createElement("div");
+  s.className = "star";
+  s.style.top = Math.random()*100+"%";
+  s.style.left = Math.random()*100+"%";
+  s.style.animationDuration = (1 + Math.random()*2) + "s";
+  starsCont.appendChild(s);
+}
+
+function typeText(el, text, speed=35, cb){
+  el.innerHTML = "";
+  let i = 0;
+  const t = setInterval(() => {
+    if(text[i] === "\n") {
+        el.innerHTML += "<br>";
+    } else {
+        el.innerHTML += text[i];
+    }
+    i++;
+    if(i >= text.length){
+      clearInterval(t);
+      if(cb) cb();
+    }
+  }, speed);
+}
+
+const msg = document.getElementById("msg");
+const btns = document.getElementById("btns");
+const pink = document.getElementById("pink");
+const heart = document.getElementById("heart");
+
+// Start logic
+typeText(msg, "gio airbrush is gaketebashi\ndamexmarebi? ˙◠˙", 30, () => {
+  btns.innerHTML = `<button onclick="yes1()">ki</button><button onclick="yes1()">ki</button>`;
+});
+
+function yes1(){
+  pink.classList.add("show");
+  setTimeout(() => {
+    pink.classList.remove("show");
+    step2();
+  }, 1400);
+}
+
+function step2(){
+  btns.innerHTML = "";
+  typeText(msg, "kartofili shegiwva?", 35, () => {
+    btns.innerHTML = `<button onclick="yes2()">ki</button><button id="noBtn">ara</button>`;
+    const noBtn = document.getElementById("noBtn");
+    const move = () => {
+        noBtn.style.position = "absolute"; // Only moves inside screen-ui
+        noBtn.style.top = Math.random() * 40 + "%";
+        noBtn.style.left = Math.random() * 40 + "%";
+    }
+    noBtn.addEventListener("mouseover", move);
+    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); move(); });
+  });
+}
+
+function yes2(){
+  heart.classList.add("show");
+  setTimeout(() => heart.classList.remove("show"), 1500);
+}
+</script>
+
+</body>
+</html>
