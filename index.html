@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Retro Room Mobile</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; touch-action: none; }
+        #ui {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            color: #9e9;
+            font-family: sans-serif;
+            pointer-events: none;
+            text-shadow: 1px 1px 5px #000;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+<div id="ui">თითით ატრიალე ოთახი 📱</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.158/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.158/examples/js/controls/OrbitControls.js"></script>
+
+<script>
+    // 1. სცენა და კამერა
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 2, 5); // კამერა ცოტა მაღლა და შორს
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio); // ხარისხი მობილურისთვის
+    document.body.appendChild(renderer.domElement);
+
+    // 2. კონტროლი მობილურისთვის (OrbitControls)
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; // გლუვი მოძრაობა
+    controls.dampingFactor = 0.05;
+    controls.maxPolarAngle = Math.PI / 2; // რომ იატაკის ქვემოთ არ ჩავიდეთ
+
+    // 3. განათება (უფრო კაშკაშა მობილურისთვის)
+    const light = new THREE.PointLight(0xffaa66, 15, 20);
+    light.position.set(0, 3, 0);
+    scene.add(light);
+    scene.add(new THREE.AmbientLight(0x404040, 2));
+
+    // 4. ოთახის ელემენტები
+    // იატაკი
+    const floor = new THREE.Mesh(
+        new THREE.PlaneGeometry(10, 10),
+        new THREE.MeshStandardMaterial({ color: 0x111111 })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    scene.add(floor);
+
+    // კედლები
+    function addWall(x, z, ry) {
+        const w = new THREE.Mesh(
+            new THREE.BoxGeometry(10, 5, 0.2),
+            new THREE.MeshStandardMaterial({ color: 0x0a0a0a })
+        );
+        w.position.set(x, 2.5, z);
+        w.rotation.y = ry;
+        scene.add(w);
+    }
+    addWall(0, -5, 0); // უკანა
+    addWall(-5, 0, Math.PI / 2); // მარცხენა
+
+    // ტელევიზორი
+    const tv = new THREE.Mesh(
+        new THREE.BoxGeometry(1.5, 1, 0.2),
+        new THREE.MeshBasicMaterial({ color: 0x111111 })
+    );
+    tv.position.set(0, 1.5, -4.8);
+    scene.add(tv);
+
+    // 5. წვიმა
+    const rainCount = 400;
+    const rainGeo = new THREE.BufferGeometry();
+    const rainPos = new Float32Array(rainCount * 3);
+    for(let i=0; i<rainCount*3; i++) rainPos[i] = (Math.random() - 0.5) * 10;
+    rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
+    const rain = new THREE.Points(rainGeo, new THREE.PointsMaterial({ color: 0x88aaff, size: 0.05 }));
+    scene.add(rain);
+
+    // 6. ანიმაცია
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        // წვიმის ვარდნა
+        const pos = rain.geometry.attributes.position.array;
+        for(let i=1; i<pos.length; i+=3) {
+            pos[i] -= 0.1;
+            if(pos[i] < 0) pos[i] = 5;
+        }
+        rain.geometry.attributes.position.needsUpdate = true;
+
+        // ტელევიზორის ციმციმი
+        tv.material.color.setRGB(Math.random()*0.3, Math.random()*0.3, Math.random()*0.3);
+
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    // ეკრანის ზომის ცვლილება
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+</script>
+</body>
+</html>
