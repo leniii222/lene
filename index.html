@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Room - Fixed</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: black; }
+        #msg {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #9e9;
+            font-family: monospace;
+            text-align: center;
+            pointer-events: none;
+            text-shadow: 1px 1px 2px black;
+        }
+    </style>
+</head>
+<body>
+
+<div id="msg">დააკლიკეთ ეკრანს დასაწყებად<br>WASD – იარე | მაუსი – გაიხედე</div>
+
+<audio id="bgMusic" loop>
+    <source src="https://cdn.pixabay.com/audio/2022/03/10/audio_5b5b5f1c1f.mp3" type="audio/mpeg">
+</audio>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.158/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.158/examples/js/controls/PointerLockControls.js"></script>
+
+<script>
+    let scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000000);
+
+    let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.y = 1.6;
+
+    let renderer = new THREE.WebGLRenderer({ antialias: false });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    let controls = new THREE.PointerLockControls(camera, document.body);
+
+    // ეკრანზე დაკლიკების ლოგიკა
+    document.body.onclick = () => {
+        controls.lock();
+        // მუსიკის ჩართვა ბრაუზერის ბლოკის ასარიდებლად
+        const music = document.getElementById("bgMusic");
+        music.play().catch(e => console.log("Audio play blocked"));
+        document.getElementById("msg").innerText = "WASD – იარე | მაუსი – გაიხედე";
+    };
+
+    /* იატაკი */
+    let floor = new THREE.Mesh(
+        new THREE.PlaneGeometry(6, 6),
+        new THREE.MeshBasicMaterial({ color: 0x111111 })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    scene.add(floor);
+
+    /* კედლები */
+    function wall(x, z, rot) {
+        let w = new THREE.Mesh(
+            new THREE.BoxGeometry(6, 3, 0.1),
+            new THREE.MeshBasicMaterial({ color: 0x050505 })
+        );
+        w.position.set(x, 1.5, z);
+        w.rotation.y = rot;
+        scene.add(w);
+    }
+    wall(0, -3, 0);
+    wall(0, 3, 0);
+    wall(-3, 0, Math.PI / 2);
+    wall(3, 0, Math.PI / 2);
+
+    /* ფანჯარა */
+    let windowPlane = new THREE.Mesh(
+        new THREE.PlaneGeometry(2, 1.5),
+        new THREE.MeshBasicMaterial({ color: 0x3b2f6d })
+    );
+    windowPlane.position.set(2.95, 1.6, 0);
+    windowPlane.rotation.y = -Math.PI / 2;
+    scene.add(windowPlane);
+
+    /* წვიმა */
+    let rainGeo = new THREE.BufferGeometry();
+    let rainCount = 600;
+    let pos = [];
+    for (let i = 0; i < rainCount; i++) {
+        pos.push(6 + Math.random() * 4, Math.random() * 6, Math.random() * 6 - 3);
+    }
+    rainGeo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    let rain = new THREE.Points(
+        rainGeo,
+        new THREE.PointsMaterial({ color: 0x88aaff, size: 0.03 })
+    );
+    scene.add(rain);
+
+    /* დივანი */
+    let sofa = new THREE.Mesh(
+        new THREE.BoxGeometry(2, 0.6, 1),
+        new THREE.MeshBasicMaterial({ color: 0x4b2e1f })
+    );
+    sofa.position.set(0, 0.3, -1.5);
+    scene.add(sofa);
+
+    /* პიცა */
+    let pizza = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.3, 0.3, 0.05, 12),
+        new THREE.MeshBasicMaterial({ color: 0xffaa33 })
+    );
+    pizza.position.set(0, 0.7, -1.5);
+    scene.add(pizza);
+
+    /* მცენარეები */
+    let plants = [];
+    for (let i = 0; i < 6; i++) {
+        let p = new THREE.Mesh(
+            new THREE.ConeGeometry(0.2, 0.5, 6),
+            new THREE.MeshBasicMaterial({ color: 0x228833 })
+        );
+        p.position.set(Math.random() * 4 - 2, 0.25, Math.random() * 4 - 2);
+        scene.add(p);
+        plants.push(p);
+    }
+
+    /* ტელევიზორი */
+    let tvMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+    let tv = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.7, 0.1), tvMat);
+    tv.position.set(2.3, 1, 1.5);
+    scene.add(tv);
+
+    /* წერილი */
+    let letter = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.8, 0.5),
+        new THREE.MeshBasicMaterial({ color: 0xffffcc })
+    );
+    letter.position.set(0, 0.6, 0.5);
+    scene.add(letter);
+
+    /* ლამპა */
+    let light = new THREE.PointLight(0xffaa66, 0, 6);
+    light.position.set(0, 2, 0);
+    scene.add(light);
+
+    /* 🐈 კატა */
+    let cat = new THREE.Mesh(
+        new THREE.BoxGeometry(0.4, 0.25, 0.2),
+        new THREE.MeshBasicMaterial({ color: 0xffcc33 })
+    );
+    cat.position.set(0, 0.13, 1);
+    scene.add(cat);
+    let catDir = 1;
+
+    /* მოძრაობა */
+    let keys = {};
+    window.onkeydown = e => keys[e.key.toLowerCase()] = true;
+    window.onkeyup = e => keys[e.key.toLowerCase()] = false;
+
+    function move() {
+        let s = 0.05;
+        if (keys["w"]) controls.moveForward(s);
+        if (keys["s"]) controls.moveForward(-s);
+        if (keys["a"]) controls.moveRight(-s);
+        if (keys["d"]) controls.moveRight(s);
+    }
+
+    /* კლიკები ობიექტებზე */
+    let raycaster = new THREE.Raycaster();
+    window.addEventListener('mousedown', () => {
+        if (!controls.isLocked) return; // მხოლოდ მაშინ როცა მაუსი ჩაკეტილია
+
+        raycaster.setFromCamera({ x: 0, y: 0 }, camera);
+        let hits = raycaster.intersectObjects([tv, letter]);
+
+        if (hits.length) {
+            if (hits[0].object === tv)
+                document.getElementById("msg").innerText = "კარტოფილს შეჭამ? 🍟";
+            if (hits[0].object === letter)
+                alert("ჩაგეხუტე ძალიან ბევრი 💚");
+        }
+        light.intensity = 1.5;
+    });
+
+    /* ანიმაციები */
+    function animateRain() {
+        let a = rain.geometry.attributes.position.array;
+        for (let i = 0; i < rainCount; i++) {
+            a[i * 3 + 1] -= 0.1;
+            if (a[i * 3 + 1] < 0) a[i * 3 + 1] = 6;
+        }
+        rain.geometry.attributes.position.needsUpdate = true;
+    }
+
+    function animateLamp(t) {
+        light.intensity = 1.2 + Math.sin(t * 0.002) * 0.3;
+    }
+
+    function animateTV() {
+        let flicker = 0.1 + Math.random() * 0.15;
+        tvMat.color.setRGB(flicker, flicker, flicker);
+    }
+
+    function animatePlants(t) {
+        plants.forEach((p, i) => {
+            p.rotation.z = Math.sin(t * 0.001 + i) * 0.1;
+        });
+    }
+
+    function animateCat() {
+        cat.position.x += 0.01 * catDir;
+        if (cat.position.x > 2 || cat.position.x < -2) catDir *= -1;
+    }
+
+    /* მთავარი ციკლი */
+    function animate(t) {
+        requestAnimationFrame(animate);
+        if (controls.isLocked) {
+            move();
+        }
+        animateRain();
+        animateLamp(t);
+        animateTV();
+        animatePlants(t);
+        animateCat();
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    window.onresize = () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+</script>
+</body>
+</html>
