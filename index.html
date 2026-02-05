@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Phone UI</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Press Start 2P', monospace;}
+
+body{
+  height:100vh;
+  background:black;
+  overflow:hidden;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+/* ⭐ Stars */
+.stars{position:fixed;inset:0;z-index:-1;}
+.star{
+  position:absolute;
+  width:2px;height:2px;
+  background:white;
+  animation:blink 2s infinite alternate;
+}
+@keyframes blink{from{opacity:.15;}to{opacity:1;}}
+
+/* 📱 Phone */
+.phone-wrap{
+  position:relative;
+  width: 100%;
+  max-width: 300px; /* ტელეფონის მაქსიმალური ზომა */
+}
+
+.phone-img{
+  width:100%;
+  display:block;
+  filter: drop-shadow(0 20px 40px rgba(0,0,0,.8));
+}
+
+/* 🖥 Perfected Screen Position - მორგებული პროცენტებით */
+.screen-ui{
+  position:absolute;
+  
+  /* 📍 მდებარეობა */
+  top: 31%;    /* სიმაღლე ზემოდან */
+  left: 50%;   /* შუაში გასწორება */
+  transform: translate(-50%, -50%); /* ზუსტი ცენტრირება */
+  
+  /* 📏 ზომები ეკრანის შესაბამისად */
+  width: 63%;  
+  height: 27%; 
+
+  padding: 8px 5px;
+  color:#ffb347;
+  text-align:center;
+  font-size: 7px; /* ოდნავ დავაპატარავე რომ უკეთ ჩაეტიოს */
+
+  background:linear-gradient(180deg,#0e1416,#060909);
+  border-radius:4px;
+  box-shadow:inset 0 0 15px #000;
+  
+  /* ტექსტის ვერტიკალური გასწორება */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.time{font-size:7px; margin-bottom:4px; color:#8a8a8a;}
+.message{line-height:1.4; min-height:30px; margin-bottom:5px; word-break: break-word;}
+
+.buttons{display:flex; gap:4px;}
+button{
+  flex:1;
+  padding:5px 2px;
+  font-size:6px;
+  border-radius:3px;
+  background:linear-gradient(180deg,#1a1a1a,#050505);
+  color:#ffb347;
+  border:1px solid #333;
+  cursor: pointer;
+}
+button:active{transform:translateY(1px);}
+
+/* overlays */
+.overlay{
+  position:fixed;inset:0;
+  display:flex;justify-content:center;align-items:center;
+  flex-direction:column;
+  font-size:32px;
+  opacity:0;pointer-events:none;
+  transition:.35s;
+  z-index: 100;
+}
+.overlay.show{opacity:1;}
+.pink{background:#ff9ecb;color:white;}
+.heart{font-size:64px;}
+.small{font-size:12px;margin-top:16px; text-align: center;}
+</style>
+</head>
+
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="phone-wrap">
+  <img src="IMG_8524.png" class="phone-img" alt="phone">
+
+  <div class="screen-ui">
+    <div class="time">22:22</div>
+    <div class="message" id="msg"></div>
+    <div class="buttons" id="btns"></div>
+  </div>
+</div>
+
+<div class="overlay pink" id="pink">
+  <div>->_<</div>
+  <div class="small">vashaa.<br>gatoce.</div>
+</div>
+
+<div class="overlay" id="heart">
+  <div class="heart">❤</div>
+</div>
+
+<script>
+// ვარსკვლავების გენერაცია
+for(let i=0;i<90;i++){
+  const s=document.createElement("div");
+  s.className="star";
+  s.style.top=Math.random()*100+"%";
+  s.style.left=Math.random()*100+"%";
+  s.style.animationDuration=(1+Math.random()*2)+"s";
+  document.getElementById("stars").appendChild(s);
+}
+
+function typeText(el, text, speed=35, cb){
+  el.innerHTML="";
+  let i=0;
+  const t=setInterval(()=>{
+    if(text[i] === "\n") {
+        el.innerHTML += "<br>";
+    } else {
+        el.innerHTML+=text[i];
+    }
+    i++;
+    if(i>=text.length){
+      clearInterval(t);
+      if(cb) cb();
+    }
+  },speed);
+}
+
+const msg=document.getElementById("msg");
+const btns=document.getElementById("btns");
+const pink=document.getElementById("pink");
+const heart=document.getElementById("heart");
+
+// საწყისი ტექსტი
+typeText(msg,"gio airbrush is gaketebashi\ndamexmarebi? ˙◠˙",30,()=>{
+  btns.innerHTML=`<button onclick="yes1()">ki</button><button onclick="yes1()">ki</button>`;
+});
+
+function yes1(){
+  pink.classList.add("show");
+  setTimeout(()=>{
+    pink.classList.remove("show");
+    step2();
+  },1400);
+}
+
+function step2(){
+  btns.innerHTML="";
+  typeText(msg,"kartofili shegiwva?",35,()=>{
+    btns.innerHTML=`<button onclick="yes2()">ki</button><button id="noBtn">ara</button>`;
+    const noBtn=document.getElementById("noBtn");
+    const move=()=>{
+        noBtn.style.position="fixed"; // ეკრანზე გაქცევა
+        noBtn.style.top=Math.random()*80+"%";
+        noBtn.style.left=Math.random()*80+"%";
+    }
+    noBtn.addEventListener("mouseover",move);
+    noBtn.addEventListener("touchstart",move);
+  });
+}
+
+function yes2(){
+  heart.classList.add("show");
+  setTimeout(()=>heart.classList.remove("show"),1500);
+}
+</script>
+
+</body>
+</html>
